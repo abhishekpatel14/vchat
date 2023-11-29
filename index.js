@@ -8,14 +8,14 @@ const messageRoutes = require("./routes/messageRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const path = require("path");
 
+const app = express();
+
 main().catch((err) => console.log(err));
 
 async function main() {
   await mongoose.connect(process.env.MONGO_URI);
   console.log("Database connected");
 }
-
-const app = express();
 
 app.use(express.json());
 
