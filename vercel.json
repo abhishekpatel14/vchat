@@ -1,26 +1,15 @@
 {
+    "version": 2,
     "builds": [
         {
             "src": "index.js",
-            "use": "@vercel/node"
-        },
-        {
-            "src": "build/**",
-            "use": "@vercel/static"
+            "use": "@now/node"
         }
     ],
     "routes": [
         {
-            "src": "/chats",
-            "dest": "build/index.html"
-        },
-        {
-            "src": "/",
-            "dest": "build/index.html"
-        },
-        {
-            "src": "/(.+)",
-            "dest": "build/$1"
+            "src": "/(.*)",
+            "dest": "index.js"
         }
     ]
 }
