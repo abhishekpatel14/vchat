@@ -1,8 +1,50 @@
 {
-    "rewrites": [
+    "builds": [
         {
-            "source": "/(.*)",
-            "destination": "/"
+            "src": "index.js",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "build/**",
+            "use": "@vercel/static"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/user",
+            "dest": "index.js"
+        },
+        {
+            "src": "/api/user/(.*)",
+            "dest": "index.js"
+        },
+        {
+            "src": "/api/chat",
+            "dest": "index.js"
+        },
+        {
+            "src": "/api/chat/(.*)",
+            "dest": "index.js"
+        },
+        {
+            "src": "/api/message",
+            "dest": "index.js"
+        },
+        {
+            "src": "/api/message/(.*)",
+            "dest": "index.js"
+        },
+        {
+            "src": "/add",
+            "dest": "build/index.html"
+        },
+        {
+            "src": "/",
+            "dest": "build/index.html"
+        },
+        {
+            "src": "/(.+)",
+            "dest": "build/$1"
         }
     ]
 }
