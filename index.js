@@ -16,9 +16,7 @@ async function main() {
   await mongoose.connect(
     "mongodb+srv://abhishekpatel:Abhishek1404@cluster0.p1f0wlq.mongodb.net/VChat?retryWrites=true&w=majority",
     {
-      useUnifiedTopology: true,
       useNewUrlParser: true,
-      useCreateIndex: true,
     }
   );
   console.log("Database connected");
