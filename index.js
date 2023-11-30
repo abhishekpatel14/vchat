@@ -13,12 +13,9 @@ const app = express();
 main().catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect(
-    "mongodb+srv://abhishekpatel:Abhishek1404@cluster0.p1f0wlq.mongodb.net/VChat?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-    }
-  );
+  await mongoose.connect(`${process.env.MONGO_URL}`, {
+    useNewUrlParser: true,
+  });
   console.log("Database connected");
 }
 
