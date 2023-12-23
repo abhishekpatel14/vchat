@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const { chats } = require("./data/data");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
@@ -19,6 +20,7 @@ async function main() {
   console.log("Database connected");
 }
 
+app.use(cors());
 app.use(express.json());
 
 // app.get("/", (req, res) => {
