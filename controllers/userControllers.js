@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+require("dotenv").config();
 const User = require("../models/userModel");
 const generateToken = require("../config/generateToken");
 const transporter = require("../config/transporter");
@@ -10,7 +11,7 @@ async function otpGenerate(req, res) {
   // Generate a new OTP code and send it via email
   global.oneTimePassword = await otpGen();
   const mailOptions = {
-    from: "patelabhishek11012001@gmail.com",
+    from: process.env.EMAIL,
     to: email,
     subject: "LogIn OTP",
     text: `Your OTP code is ${oneTimePassword}.`,
