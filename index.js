@@ -73,6 +73,21 @@ io.on("connection", (socket) => {
     socket.emit("connected");
   });
 
+  socket.emit("me", socket.id);
+  // console.log(socket.id);
+
+  socket.on("disconnect", (socket) => {
+    console.log(socket);
+  });
+
+  socket.on("calluser", ({ userToCall, signalData, from, name }) => {
+    io.to(userToCall).emit("calluser", { signal: signalData, from, name });
+  });
+
+  socket.on("answercall", (data) => {
+    io.to(data.to).emit("callaccepted", data.signal);
+  });
+
   socket.on("join chat", (room) => {
     socket.join(room);
     console.log("User Joined Room: " + room);

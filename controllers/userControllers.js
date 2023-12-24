@@ -1,30 +1,77 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const generateToken = require("../config/generateToken");
+const transporter = require("../config/transporter");
+const { otpGen } = require("otp-gen-agent");
+
+async function otpGenerate(req, res) {
+  const { email } = req.body;
+
+  // Generate a new OTP code and send it via email
+  global.oneTimePassword = await otpGen();
+  const mailOptions = {
+    from: "patelabhishek11012001@gmail.com",
+    to: email,
+    subject: "LogIn OTP",
+    text: `Your OTP code is ${oneTimePassword}.`,
+  };
+
+  try {
+    const result = await transporter.sendMail(mailOptions);
+    console.log(result);
+    console.log("OTP sent: ", oneTimePassword);
+    res.status(200).send({ message: "OTP sent successfully" });
+  } catch (error) {
+    console.error("Error sending email: ", error);
+    res.status(500).send({ message: "Failed to send OTP" });
+  }
+}
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, pic } = req.body;
+  const { name, email, password, pic, otp } = req.body;
 
-  if (!name || !email || !password) {
-    res.status(400);
-    throw new Error("Please Enter all the Fields");
+  if (otp === oneTimePassword && otp != 0) {
+    if (!name || !email || !password) {
+      res.status(400);
+      throw new Error("Please Enter all the Fields");
+    }
+
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      res.status(400);
+      throw new Error("User already exists");
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      pic,
+    });
+
+    if (user) {
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        pic: user.pic,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(400);
+      throw new Error("Failed to create the user");
+    }
+  } else {
+    res.status(401).send({ message: "Invalid OTP" });
   }
+});
 
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
+const updateUser = asyncHandler(async (req, res) => {
+  const { name, pic, _id } = req.body;
 
-  const user = await User.create({
-    name,
-    email,
-    password,
-    pic,
-  });
-
+  const user = await User.findOneAndUpdate({ _id }, { name, pic });
   if (user) {
-    res.status(201).json({
+    res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -33,7 +80,7 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(400);
-    throw new Error("Failed to create the user");
+    throw new Error("Unable to update profile");
   }
 });
 
@@ -70,4 +117,4 @@ const allUsers = asyncHandler(async (req, res) => {
   res.send(users);
 });
 
-module.exports = { registerUser, authUser, allUsers };
+module.exports = { registerUser, authUser, allUsers, updateUser, otpGenerate };
